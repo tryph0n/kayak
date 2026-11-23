@@ -55,7 +55,7 @@ class S3Storage:
             self.s3.Object(self.bucket_name, key).load()
             return True
         except ClientError as e:
-            if e.response['Error']['Code'] == "404":
+            if e.response["Error"]["Code"] == "404":
                 return False
             raise
 
@@ -95,6 +95,6 @@ class S3Storage:
         """
         try:
             obj = self.bucket.Object(key)
-            return pd.read_csv(io.BytesIO(obj.get()['Body'].read()))
+            return pd.read_csv(io.BytesIO(obj.get()["Body"].read()))
         except Exception as e:
             raise Exception(f"Failed to download from S3: {str(e)}") from e

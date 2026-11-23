@@ -65,7 +65,9 @@ class Hotel(Base):
     __tablename__ = "hotels"
 
     hotel_id = Column(Integer, primary_key=True, autoincrement=True)
-    city_id = Column(Integer, ForeignKey("destinations.city_id"), nullable=False, index=True)
+    city_id = Column(
+        Integer, ForeignKey("destinations.city_id"), nullable=False, index=True
+    )
     hotel_name = Column(String(255), nullable=False)
     url = Column(Text, nullable=False)
     score = Column(Float, index=True)

@@ -23,11 +23,13 @@ def merge_weather_hotels() -> pd.DataFrame:
         Exception: If S3 operations fail or required settings are missing.
     """
     # Validate required settings
-    Settings.validate_required([
-        "aws_access_key_id",
-        "aws_secret_access_key",
-        "bucket",
-    ])
+    Settings.validate_required(
+        [
+            "aws_access_key_id",
+            "aws_secret_access_key",
+            "bucket",
+        ]
+    )
 
     # Initialize S3 client
     s3 = S3Storage(
@@ -51,42 +53,40 @@ def merge_weather_hotels() -> pd.DataFrame:
     # Inner join on city_name with suffixes for GPS columns
     print("Merging datasets on city_name...")
     df_merged = pd.merge(
-        df_hotels,
-        df_weather,
-        on='city_name',
-        how='inner',
-        suffixes=('_hotel', '_city')
+        df_hotels, df_weather, on="city_name", how="inner", suffixes=("_hotel", "_city")
     )
     print(f"OK Merged data: {len(df_merged)} hotels")
 
     # Rename city GPS columns to be the primary lat/lon for ETL
     # (Destinations use city coordinates as primary; hotel coords are separate)
-    df_merged = df_merged.rename(columns={
-        'latitude_city': 'latitude',
-        'longitude_city': 'longitude'
-    })
+    df_merged = df_merged.rename(
+        columns={"latitude_city": "latitude", "longitude_city": "longitude"}
+    )
 
     # Select top N hotels per destination
     # Group by city_name, sort by score within each group, take top N per destination
     df_top = (
-        df_merged
-        .sort_values(['city_name', 'score'], ascending=[True, False])
-        .groupby('city_name', as_index=False)
+        df_merged.sort_values(["city_name", "score"], ascending=[True, False])
+        .groupby("city_name", as_index=False)
         .head(Settings.hotels_per_destination)
     )
 
     # Sort final result by score descending for display
-    df_top = df_top.sort_values('score', ascending=False)
+    df_top = df_top.sort_values("score", ascending=False)
 
     total_hotels = len(df_top)
-    n_destinations = df_top['city_name'].nunique()
-    print(f"OK Selected {total_hotels} hotels ({Settings.hotels_per_destination} per destination × {n_destinations} destinations)")
+    n_destinations = df_top["city_name"].nunique()
+    print(
+        f"OK Selected {total_hotels} hotels ({Settings.hotels_per_destination} per destination × {n_destinations} destinations)"
+    )
     print(f"   Score range: {df_top['score'].max():.1f} - {df_top['score'].min():.1f}")
 
     # Upload final recommendations to S3
     print("Uploading final recommendations to S3...")
     s3.upload_dataframe(df_top, Settings.s3_final_recommendations_path)
-    print(f"OK Saved to: s3://{Settings.bucket}/{Settings.s3_final_recommendations_path}")
+    print(
+        f"OK Saved to: s3://{Settings.bucket}/{Settings.s3_final_recommendations_path}"
+    )
 
     # Display top 5 hotels
     print("\nTop-5 Hotels:")

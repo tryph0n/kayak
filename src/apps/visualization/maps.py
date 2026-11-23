@@ -156,7 +156,9 @@ def create_top20_hotels_map():
                     "hotel_name": h.hotel_name,
                     "city_name": h.destination.city_name,
                     "latitude": h.latitude if h.latitude else h.destination.latitude,
-                    "longitude": h.longitude if h.longitude else h.destination.longitude,
+                    "longitude": h.longitude
+                    if h.longitude
+                    else h.destination.longitude,
                     "score": h.score,
                     "url": h.url,
                     "address": h.address,
@@ -256,9 +258,13 @@ def create_hotels_map():
             [
                 {
                     "hotel_name": h.hotel_name,
-                    "city_name": h.destination.city_name if h.destination else "Unknown",
+                    "city_name": h.destination.city_name
+                    if h.destination
+                    else "Unknown",
                     "latitude": h.latitude if h.latitude else h.destination.latitude,
-                    "longitude": h.longitude if h.longitude else h.destination.longitude,
+                    "longitude": h.longitude
+                    if h.longitude
+                    else h.destination.longitude,
                     "score": h.score,
                     "address": h.address or "N/A",
                     "description": _truncate(h.description),

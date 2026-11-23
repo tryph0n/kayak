@@ -8,59 +8,59 @@ import math
 # Seasonal definitions (meteorological)
 # Each season has start/end dates and a midpoint for plateau weighting
 SEASONS = {
-    'winter': {
-        'start': (12, 1),   # December 1
-        'end': (2, 28),     # February 28 (89 days, non-leap)
-        'midpoint': (1, 14) # January 14 (midpoint of 89-day season)
+    "winter": {
+        "start": (12, 1),  # December 1
+        "end": (2, 28),  # February 28 (89 days, non-leap)
+        "midpoint": (1, 14),  # January 14 (midpoint of 89-day season)
     },
-    'spring': {
-        'start': (3, 1),    # March 1
-        'end': (5, 31),     # May 31 (91 days)
-        'midpoint': (4, 15) # April 15
+    "spring": {
+        "start": (3, 1),  # March 1
+        "end": (5, 31),  # May 31 (91 days)
+        "midpoint": (4, 15),  # April 15
     },
-    'summer': {
-        'start': (6, 1),    # June 1
-        'end': (8, 31),     # August 31 (91 days)
-        'midpoint': (7, 16) # July 16
+    "summer": {
+        "start": (6, 1),  # June 1
+        "end": (8, 31),  # August 31 (91 days)
+        "midpoint": (7, 16),  # July 16
     },
-    'autumn': {
-        'start': (9, 1),    # September 1
-        'end': (11, 30),    # November 30 (90 days)
-        'midpoint': (10, 16) # October 16
+    "autumn": {
+        "start": (9, 1),  # September 1
+        "end": (11, 30),  # November 30 (90 days)
+        "midpoint": (10, 16),  # October 16
     },
 }
 
 # Optimal temperatures (°C) by season (from HCI research)
 # These represent ideal temperatures that get maximum score
 OPTIMAL_TEMPS = {
-    'winter': 16.0,   # Warm temps wanted in winter
-    'spring': 20,   # Mild temps OK in spring
-    'summer': 26,   # 24-28°C ideal range for summer
-    'autumn': 22,   # Indian summer (warm autumn)
+    "winter": 16.0,  # Warm temps wanted in winter
+    "spring": 20,  # Mild temps OK in spring
+    "summer": 26,  # 24-28°C ideal range for summer
+    "autumn": 22,  # Indian summer (warm autumn)
 }
 
 # Scoring weights by season (must sum to 100)
 # Temperature, rain, and clouds have different importance per season
 SEASONAL_WEIGHTS = {
-    'winter': {
-        'temperature': 50,  # Want warm temps
-        'rain': 40,         # NO rain wanted (snow/cold rain)
-        'clouds': 10        # Clouds less important
+    "winter": {
+        "temperature": 50,  # Want warm temps
+        "rain": 40,  # NO rain wanted (snow/cold rain)
+        "clouds": 10,  # Clouds less important
     },
-    'spring': {
-        'temperature': 40,  # Moderate temps OK
-        'rain': 20,         # Light showers acceptable
-        'clouds': 40        # Want sun (flowers, nature)
+    "spring": {
+        "temperature": 40,  # Moderate temps OK
+        "rain": 20,  # Light showers acceptable
+        "clouds": 40,  # Want sun (flowers, nature)
     },
-    'summer': {
-        'temperature': 60,  # Ideal temp range critical
-        'rain': 30,         # Rain ruins beach/outdoor
-        'clouds': 10        # Some clouds OK (shade)
+    "summer": {
+        "temperature": 60,  # Ideal temp range critical
+        "rain": 30,  # Rain ruins beach/outdoor
+        "clouds": 10,  # Some clouds OK (shade)
     },
-    'autumn': {
-        'temperature': 50,  # Indian summer (warm)
-        'rain': 35,         # Dry weather wanted
-        'clouds': 15        # Some clouds OK
+    "autumn": {
+        "temperature": 50,  # Indian summer (warm)
+        "rain": 35,  # Dry weather wanted
+        "clouds": 15,  # Some clouds OK
     },
 }
 

@@ -66,7 +66,12 @@ class Settings:
         Raises:
             ValueError: If required PostgreSQL environment variables are missing.
         """
-        required = ["postgres_host", "postgres_database", "postgres_user", "postgres_password"]
+        required = [
+            "postgres_host",
+            "postgres_database",
+            "postgres_user",
+            "postgres_password",
+        ]
         cls.validate_required(required)
 
         return URL.create(

@@ -22,6 +22,7 @@ from src.settings.weather_scoring import (
 
 logger = logging.getLogger(__name__)
 
+
 class WeatherClient:
     """
     Client for OpenWeatherMap 2.5 One Call API (free tier).
@@ -37,7 +38,7 @@ class WeatherClient:
 
     def get_score_for_row(self, row):
         try:
-            weather_data = self.get_weather(row['latitude'], row['longitude'])
+            weather_data = self.get_weather(row["latitude"], row["longitude"])
             return self.compute_weather_score(weather_data)
         except Exception as e:
             logger.warning("Failed to get weather score for row: %s", e, exc_info=True)
@@ -75,8 +76,7 @@ class WeatherClient:
 
         except requests.RequestException as e:
             raise requests.RequestException(
-                f"Failed to fetch weather for {latitude}, {longitude}: "
-                f"{str(e)}"
+                f"Failed to fetch weather for {latitude}, {longitude}: {str(e)}"
             ) from e
 
     def _get_season_weight(self, target_date: datetime) -> dict[str, float]:
@@ -101,19 +101,19 @@ class WeatherClient:
         target_ordinal = target_date.toordinal()
         half_transition = TRANSITION_DAYS / 2
 
-        season_order = ['winter', 'spring', 'summer', 'autumn']
-        weights = {'winter': 0.0, 'spring': 0.0, 'summer': 0.0, 'autumn': 0.0}
+        season_order = ["winter", "spring", "summer", "autumn"]
+        weights = {"winter": 0.0, "spring": 0.0, "summer": 0.0, "autumn": 0.0}
 
         # FIRST PASS: Check END boundaries for transitions
         for i, season_name in enumerate(season_order):
             config = SEASONS[season_name]
-            end_month, end_day = config['end']
+            end_month, end_day = config["end"]
 
             # Calculate season end date
             end_date = datetime(target_date.year, end_month, end_day)
 
             # Handle winter year wrap
-            if season_name == 'winter':
+            if season_name == "winter":
                 if target_date.month >= 12:
                     # December: winter ends next year
                     end_date = datetime(target_date.year + 1, end_month, end_day)
@@ -153,15 +153,15 @@ class WeatherClient:
         # SECOND PASS: Check for plateau (not in any transition)
         for season_name in season_order:
             config = SEASONS[season_name]
-            start_month, start_day = config['start']
-            end_month, end_day = config['end']
+            start_month, start_day = config["start"]
+            end_month, end_day = config["end"]
 
             # Calculate season boundaries
             start_date = datetime(target_date.year, start_month, start_day)
             end_date = datetime(target_date.year, end_month, end_day)
 
             # Handle winter year wrap
-            if season_name == 'winter':
+            if season_name == "winter":
                 if target_date.month >= 12:
                     start_date = datetime(target_date.year, start_month, start_day)
                     end_date = datetime(target_date.year + 1, end_month, end_day)
@@ -179,7 +179,11 @@ class WeatherClient:
 
             # Check if we're on plateau (past start transition, before end transition)
             # Use inclusive boundaries to avoid gaps (- 1 closes the leap-year off-by-one)
-            if start_ordinal + half_transition - 1 <= target_ordinal <= end_ordinal - half_transition:
+            if (
+                start_ordinal + half_transition - 1
+                <= target_ordinal
+                <= end_ordinal - half_transition
+            ):
                 weights[season_name] = PLATEAU_WEIGHT
                 return weights
 
@@ -199,7 +203,7 @@ class WeatherClient:
         Returns:
             float: Score in [0, 1] range.
         """
-        return math.exp(-((temp - optimal_temp) ** 2) / (2 * TEMP_SIGMA ** 2))
+        return math.exp(-((temp - optimal_temp) ** 2) / (2 * TEMP_SIGMA**2))
 
     def compute_weather_score(self, weather_data: dict, target_date: datetime = None):
         """Calculate weather score using plateau seasonal weighting.
@@ -256,9 +260,9 @@ class WeatherClient:
 
         # Weighted sum (normalize to [0, 100])
         final_score = (
-            temp_score_total * weights['temperature'] +
-            rain_score * weights['rain'] +
-            cloud_score * weights['clouds']
+            temp_score_total * weights["temperature"]
+            + rain_score * weights["rain"]
+            + cloud_score * weights["clouds"]
         )
 
         # Format season weights for output (show non-zero only)

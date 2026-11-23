@@ -105,12 +105,13 @@ class ETLPipeline:
 
         # Count successes
         success_count = sum(
-            1 for lat, lon in zip(df["hotel_latitude"], df["hotel_longitude"])
+            1
+            for lat, lon in zip(df["hotel_latitude"], df["hotel_longitude"])
             if lat is not None and lon is not None
         )
         logger.info(
             f"Successfully geocoded {success_count}/{len(df)} hotels "
-            f"({success_count/len(df)*100:.1f}%)"
+            f"({success_count / len(df) * 100:.1f}%)"
         )
 
         return df
@@ -151,9 +152,7 @@ class ETLPipeline:
 
         # Handle nulls for destinations
         df = df.dropna(subset=required_destination_cols)
-        logger.info(
-            f"After dropping nulls in destination columns: {len(df)} rows"
-        )
+        logger.info(f"After dropping nulls in destination columns: {len(df)} rows")
 
         # Handle nulls for hotels
         df = df.dropna(subset=required_hotel_cols)
@@ -235,9 +234,7 @@ class ETLPipeline:
             existing_cols = [col for col in destination_cols if col in df.columns]
             destinations_df = df[existing_cols].drop_duplicates(subset=["city_name"])
 
-            logger.info(
-                f"Inserting {len(destinations_df)} unique destinations..."
-            )
+            logger.info(f"Inserting {len(destinations_df)} unique destinations...")
 
             # Insert destinations (no upsert needed since tables are truncated)
             for _, row in destinations_df.iterrows():
@@ -275,8 +272,7 @@ class ETLPipeline:
                 city_id = city_id_map.get(row["city_name"])
                 if not city_id:
                     logger.warning(
-                        f"City {row['city_name']} not found in mapping, "
-                        "skipping hotel"
+                        f"City {row['city_name']} not found in mapping, skipping hotel"
                     )
                     continue
 
@@ -344,12 +340,8 @@ class ETLPipeline:
             logger.info("=" * 60)
             logger.info("ETL Pipeline Completed Successfully")
             logger.info("=" * 60)
-            logger.info(
-                f"OK Destinations: {stats['destinations_inserted']} inserted"
-            )
-            logger.info(
-                f"OK Hotels: {stats['hotels_inserted']} inserted"
-            )
+            logger.info(f"OK Destinations: {stats['destinations_inserted']} inserted")
+            logger.info(f"OK Hotels: {stats['hotels_inserted']} inserted")
             logger.info("=" * 60)
 
             return stats

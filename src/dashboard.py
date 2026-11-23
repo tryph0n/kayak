@@ -60,12 +60,16 @@ def load_data():
             [
                 {
                     "hotel_name": h.hotel_name,
-                    "city_name": h.destination.city_name if h.destination else "Unknown",
+                    "city_name": h.destination.city_name
+                    if h.destination
+                    else "Unknown",
                     "score": h.score,
                     "address": h.address,
                     "description": h.description,
                     "url": h.url,
-                    "weather_score": h.destination.weather_score if h.destination else None,
+                    "weather_score": h.destination.weather_score
+                    if h.destination
+                    else None,
                 }
                 for h in hotels
             ]
@@ -103,9 +107,7 @@ with col3:
     st.metric("Best Weather Score", best_weather)
 
 with col4:
-    best_hotel = (
-        f"{df_hotels['score'].max():.1f}/10" if not df_hotels.empty else "N/A"
-    )
+    best_hotel = f"{df_hotels['score'].max():.1f}/10" if not df_hotels.empty else "N/A"
     st.metric("Best Hotel Score", best_hotel)
 
 # Top Destinations section
