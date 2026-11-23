@@ -20,7 +20,6 @@ Unprocessed data directly from external APIs.
 | File | Path | Content | Source | Updated By |
 |------|------|---------|--------|------------|
 | Coordinates | `kayak/raw/coordinates.csv` | City coordinates (lat, lon) for 35 French cities | Nominatim API | `orchestration.py` |
-| Weather Raw | `kayak/raw/weather_raw.csv` | Raw weather data without scoring | OpenWeatherMap API | Not used (weather scoring is done directly) |
 
 **Format**: CSV with columns varying by source.
 
@@ -130,10 +129,10 @@ df = s3.download_dataframe(Settings.s3_top5_destinations_path)
 
 ### Changes Applied
 1. Updated `src/api/orchestration.py`:
-   - Line 29: `coordinates_key = Settings.s3_coordinates_path`
-   - Line 66: `weather_key = Settings.s3_weather_scored_path`
+   - `coordinates_key = Settings.s3_coordinates_path`
+   - `weather_key = Settings.s3_weather_scored_path`
 
-2. Added S3 paths to `src/settings/base.py` (lines 33-44)
+2. Added S3 paths to `src/settings/base.py`
 
 ### Benefits
 - Single source of truth for all S3 paths

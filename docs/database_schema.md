@@ -123,14 +123,16 @@ city = hotel.destination  # Destination object
 
 ### ETL Process (CSV → PostgreSQL)
 
+The ETL downloads one file from S3, `kayak/final/travel_recommendations.csv`, and loads both tables from it.
+
 1. **Destinations:**
-   - Load `top_destinations.csv`
+   - Take one row per `city_name` from the file
    - Insert cities with `city_name` (natural key)
    - PostgreSQL generates `city_id` automatically
    - Retrieve generated `city_id` for each city
 
 2. **Hotels:**
-   - Load `top_hotels.csv` (contains `city_name`, not `city_id`)
+   - Take the hotel rows from the same file (they contain `city_name`, not `city_id`)
    - Map `city_name` → `city_id` using destinations table
    - Insert hotels with `city_id` foreign key
 
