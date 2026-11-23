@@ -94,13 +94,13 @@ The system selects **M hotels per destination**, NOT M hotels globally.
 
 **Example with TOP_N_DESTINATIONS=3 and HOTELS_PER_DESTINATION=4:**
 
-✅ **Correct behavior:**
+**Correct behavior:**
 - Paris: 4 hotels
 - Lyon: 4 hotels
 - Marseille: 4 hotels
 - **Total: 12 hotels**
 
-❌ **Incorrect behavior (old logic):**
+**Incorrect behavior (old logic):**
 - Paris: 8 hotels (higher scores)
 - Lyon: 3 hotels
 - Marseille: 1 hotel
