@@ -10,7 +10,7 @@ help:
 	@echo "  make setup-scraping   Install Playwright browsers (required once before scraping)"
 	@echo "  make test             Run unit tests"
 	@echo "  make test-integration Run integration tests (real API calls)"
-	@echo "  make lint             Run flake8 linter"
+	@echo "  make lint             Run ruff lint and format checks"
 	@echo "  make weather          Run weather pipeline and generate Top-5 destinations"
 	@echo "  make scrape-hotels    Scrape hotels from Top-5 destinations (requires 'make weather' first)"
 	@echo "  make merge-data       Merge weather + hotels data and generate Top-20 final recommendations"
@@ -24,7 +24,7 @@ help:
 
 setup:
 	@echo "Syncing dependencies with uv..."
-	$(UV) sync --extra dev --extra scraping
+	$(UV) sync --extra scraping
 	@if [ ! -f .env ]; then \
 		echo "Creating .env from template..."; \
 		cp .env.template .env; \
@@ -36,7 +36,7 @@ setup:
 setup-scraping:
 	@echo "Installing playwright browsers..."
 	$(UV) run playwright install chromium
-	@echo "✓ Scraping environment ready"
+	@echo "OK Scraping environment ready"
 
 test:
 	@echo "Running unit tests..."
@@ -53,8 +53,9 @@ test-integration:
 	$(UV) run pytest tests/ -v -s -m "integration"
 
 lint:
-	@echo "Running flake8..."
-	$(UV) run flake8 src/ tests/
+	@echo "Running ruff..."
+	$(UV) run ruff check .
+	$(UV) run ruff format --check .
 
 weather:
 	@if [ ! -f .env ]; then \
