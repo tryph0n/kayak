@@ -73,8 +73,9 @@ def test_compute_weather_score_winter_not_negative(weather_client):
 
     score = weather_client.compute_weather_score(winter_data)
 
-    assert score["weather_score"] >= 0, \
+    assert score["weather_score"] >= 0, (
         f"Winter score should not be negative, got {score['weather_score']}"
+    )
 
 
 def test_compute_weather_score_range(weather_client):
@@ -96,15 +97,19 @@ def test_compute_weather_score_range(weather_client):
     cold_score = weather_client.compute_weather_score(extreme_cold_rainy)
     hot_score = weather_client.compute_weather_score(extreme_hot_sunny)
 
-    assert 0 <= cold_score["weather_score"] <= 100, \
+    assert 0 <= cold_score["weather_score"] <= 100, (
         f"Score should be in [0, 100], got {cold_score['weather_score']}"
-    assert 0 <= hot_score["weather_score"] <= 100, \
+    )
+    assert 0 <= hot_score["weather_score"] <= 100, (
         f"Score should be in [0, 100], got {hot_score['weather_score']}"
-    assert hot_score["weather_score"] > cold_score["weather_score"], \
+    )
+    assert hot_score["weather_score"] > cold_score["weather_score"], (
         "Sunny weather should score higher than rainy weather"
+    )
 
 
 # Plateau seasonal scoring tests
+
 
 def test_seasonal_weight_plateau(weather_client):
     """Test that seasonal weight = 1.0 on plateau (middle of season)."""
@@ -172,13 +177,19 @@ def test_seasonal_weight_linear_transition(weather_client):
     assert weights_end["autumn"] == pytest.approx(1.0, abs=0.01)
 
     # Verify all weights sum to 1.0
-    for weights in [weights_start, weights_mid, weights_boundary, weights_after, weights_end]:
+    for weights in [
+        weights_start,
+        weights_mid,
+        weights_boundary,
+        weights_after,
+        weights_end,
+    ]:
         assert sum(weights.values()) == pytest.approx(1.0)
 
 
 def test_temp_score_winter_optimal(weather_client):
     """Test that 18°C in winter gets high score."""
-    optimal_winter_temp = OPTIMAL_TEMPS['winter']  # 18°C
+    optimal_winter_temp = OPTIMAL_TEMPS["winter"]  # 18°C
 
     winter_data = {
         "list": [
@@ -191,8 +202,9 @@ def test_temp_score_winter_optimal(weather_client):
     score = weather_client.compute_weather_score(winter_data, target_date=jan_14)
 
     # With optimal temp, no rain, no clouds: should get near-perfect score
-    assert score["weather_score"] > 90, \
+    assert score["weather_score"] > 90, (
         f"Optimal winter conditions should score high, got {score['weather_score']}"
+    )
 
 
 def test_temp_score_summer_extreme(weather_client):
@@ -212,14 +224,20 @@ def test_temp_score_summer_extreme(weather_client):
     }
 
     jul_16 = datetime(2025, 7, 16)
-    extreme_score = weather_client.compute_weather_score(extreme_summer_data, target_date=jul_16)
-    optimal_score = weather_client.compute_weather_score(optimal_summer_data, target_date=jul_16)
+    extreme_score = weather_client.compute_weather_score(
+        extreme_summer_data, target_date=jul_16
+    )
+    optimal_score = weather_client.compute_weather_score(
+        optimal_summer_data, target_date=jul_16
+    )
 
     # 40°C should score significantly lower than 26°C due to Gaussian penalty
-    assert optimal_score["weather_score"] > extreme_score["weather_score"], \
+    assert optimal_score["weather_score"] > extreme_score["weather_score"], (
         "Optimal temp (26°C) should outscore extreme temp (40°C)"
-    assert extreme_score["weather_score"] < 80, \
+    )
+    assert extreme_score["weather_score"] < 80, (
         f"40°C should be penalized, got {extreme_score['weather_score']}"
+    )
 
 
 def test_variable_weights(weather_client):
@@ -235,12 +253,16 @@ def test_variable_weights(weather_client):
     spring_date = datetime(2025, 4, 15)  # Spring midpoint
     winter_date = datetime(2025, 1, 14)  # Winter midpoint
 
-    spring_score = weather_client.compute_weather_score(rainy_data, target_date=spring_date)
-    winter_score = weather_client.compute_weather_score(rainy_data, target_date=winter_date)
+    spring_score = weather_client.compute_weather_score(
+        rainy_data, target_date=spring_date
+    )
+    winter_score = weather_client.compute_weather_score(
+        rainy_data, target_date=winter_date
+    )
 
     # Verify seasonal weights are being applied
-    assert SEASONAL_WEIGHTS['spring']['rain'] == 20
-    assert SEASONAL_WEIGHTS['winter']['rain'] == 40
+    assert SEASONAL_WEIGHTS["spring"]["rain"] == 20
+    assert SEASONAL_WEIGHTS["winter"]["rain"] == 40
 
     # Winter should penalize rain more heavily
     # (lower score with same rain conditions)
