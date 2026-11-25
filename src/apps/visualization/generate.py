@@ -32,7 +32,9 @@ def generate_all_maps():
         print("-" * 50)
 
         # Generate top destinations map
-        print(f"\n[1/2] Generating Top-{Settings.top_n_destinations} Destinations map...")
+        print(
+            f"\n[1/2] Generating Top-{Settings.top_n_destinations} Destinations map..."
+        )
         fig_dest = create_top5_map()
         fig_dest.write_html("outputs/top5_destinations.html")
         print("OK Saved: outputs/top5_destinations.html")

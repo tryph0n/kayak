@@ -17,12 +17,14 @@ logger = logging.getLogger(__name__)
 
 def main():
     """Fetch geocoding and weather data, then upload to S3."""
-    Settings.validate_required([
-        "openweather_api_key",
-        "aws_access_key_id",
-        "aws_secret_access_key",
-        "bucket",
-    ])
+    Settings.validate_required(
+        [
+            "openweather_api_key",
+            "aws_access_key_id",
+            "aws_secret_access_key",
+            "bucket",
+        ]
+    )
 
     logger.info("Loading configuration...")
 
@@ -42,13 +44,19 @@ def main():
         logger.info("Geocoding cities...")
         coordinates = geocoding_client.get_coordinates_batch(FRENCH_CITIES)
         df_coord = pd.DataFrame.from_dict(coordinates, orient="index")
-        df_coord.index.name = 'city_name'
+        df_coord.index.name = "city_name"
         df_coord = df_coord.reset_index()
 
         # Validate city_name column
-        assert 'city_name' in df_coord.columns, "Missing city_name column in coordinates DataFrame"
-        assert df_coord['city_name'].nunique() == len(df_coord), "Duplicate city names found in coordinates DataFrame"
-        assert len(df_coord) == len(FRENCH_CITIES), f"Expected {len(FRENCH_CITIES)} cities, got {len(df_coord)}"
+        assert "city_name" in df_coord.columns, (
+            "Missing city_name column in coordinates DataFrame"
+        )
+        assert df_coord["city_name"].nunique() == len(df_coord), (
+            "Duplicate city names found in coordinates DataFrame"
+        )
+        assert len(df_coord) == len(FRENCH_CITIES), (
+            f"Expected {len(FRENCH_CITIES)} cities, got {len(df_coord)}"
+        )
         logger.info(f"OK Validated {len(df_coord)} cities with unique city_name values")
 
         logger.info("Uploading to S3...")
@@ -62,10 +70,12 @@ def main():
     weather_client = WeatherClient(Settings.openweather_api_key)
 
     with ThreadPoolExecutor(max_workers=10) as executor:
-        results = list(executor.map(
-            weather_client.get_score_for_row,
-            [row for _, row in df_coord.iterrows()]
-        ))
+        results = list(
+            executor.map(
+                weather_client.get_score_for_row,
+                [row for _, row in df_coord.iterrows()],
+            )
+        )
 
         # Filter out failed cities (None results)
         valid_mask = [r is not None for r in results]
@@ -75,17 +85,20 @@ def main():
         valid_results = [r for r in results if r is not None]
 
         results_df = pd.DataFrame(valid_results)
-        results_df = results_df.rename(columns={'avg_temperature': 'avg_temperature_7d'})
+        results_df = results_df.rename(
+            columns={"avg_temperature": "avg_temperature_7d"}
+        )
 
         df_coord = df_coord[valid_mask].reset_index(drop=True)
         df_coord = pd.concat([df_coord, results_df], axis=1)
 
-
     df = df_coord.sort_values(by=["weather_score"], ascending=False)
 
     # Validate final DataFrame before upload
-    assert 'city_name' in df.columns, "Missing city_name column in final DataFrame"
-    assert df['city_name'].nunique() == len(df), "Duplicate city names in final DataFrame"
+    assert "city_name" in df.columns, "Missing city_name column in final DataFrame"
+    assert df["city_name"].nunique() == len(df), (
+        "Duplicate city names in final DataFrame"
+    )
     logger.info(f"OK Final validation: {len(df)} cities with unique city_name values")
 
     logger.info("Uploading weather scored data to S3...")
@@ -99,14 +112,14 @@ def main():
     # Extract and save Top-N destinations
     df_top5 = df.head(Settings.top_n_destinations).copy()
     top5_columns = [
-        'city_name',
-        'latitude',
-        'longitude',
-        'weather_score',
-        'avg_temperature_7d',
-        'avg_rain_probability',
-        'avg_cloud_coverage',
-        'forecast_count'
+        "city_name",
+        "latitude",
+        "longitude",
+        "weather_score",
+        "avg_temperature_7d",
+        "avg_rain_probability",
+        "avg_cloud_coverage",
+        "forecast_count",
     ]
     df_top5 = df_top5[top5_columns]
 

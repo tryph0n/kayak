@@ -6,8 +6,8 @@ build-backend = "hatchling.build"
 name = "kayak-travel-recommender"
 version = "0.1.0"
 description = "Travel destination recommender based on weather data"
-authors = [{name = "Your Name", email = "your.email@example.com"}]
-requires-python = ">=3.11"
+authors = [{name = "Samy Saad"}]
+requires-python = ">=3.12"
 dependencies = [
     "requests>=2.32.0",
     "boto3>=1.40.0",
@@ -21,10 +21,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=8.4.0",
-    "flake8>=7.3.0",
-]
 scraping = [
     # scrapy-playwright 0.0.45 fixes Scrapy 2.14 compatibility (HTTP11DownloadHandler import path)
     # Requires: Python >=3.10, Scrapy >=2.7, Playwright >=1.40
@@ -33,17 +29,29 @@ scraping = [
     "playwright>=1.40.0",
 ]
 
+[project.urls]
+Repository = "https://github.com/tryph0n/kayak"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = ["-vvv", "-m", "not integration"]
 pythonpath = ["src"]
 
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "W503"]
+[tool.ruff]
+target-version = "py312"
+extend-exclude = ["*.ipynb"]
+force-exclude = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+    "ruff==0.15.0",
+]
+
+[tool.check-readme-links]
+allow = ["coordinates.csv"]

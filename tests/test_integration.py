@@ -21,7 +21,7 @@ load_dotenv()
 @pytest.mark.integration
 @pytest.mark.skipif(
     not os.getenv("RUN_INTEGRATION_TESTS"),
-    reason="Set RUN_INTEGRATION_TESTS=1 to run integration tests"
+    reason="Set RUN_INTEGRATION_TESTS=1 to run integration tests",
 )
 def test_nominatim_api_still_works():
     """Verify Nominatim API responds correctly."""
@@ -37,8 +37,7 @@ def test_nominatim_api_still_works():
 
 @pytest.mark.integration
 @pytest.mark.skipif(
-    not os.getenv("OPENWEATHER_API_KEY"),
-    reason="OPENWEATHER_API_KEY not set"
+    not os.getenv("OPENWEATHER_API_KEY"), reason="OPENWEATHER_API_KEY not set"
 )
 def test_openweather_api_still_works():
     """Verify OpenWeatherMap API responds correctly."""
@@ -46,12 +45,9 @@ def test_openweather_api_still_works():
     client = WeatherClient(api_key)
 
     coords = {"latitude": 48.86, "longitude": 2.35}
-    weather = client.get_weather(
-        coords["latitude"],
-        coords["longitude"]
-    )
+    weather = client.get_weather(coords["latitude"], coords["longitude"])
 
-    EXPECTED_RES_COUNT = 40   # 1 forecast every 3 hours for 5 days: 5*24/3
+    EXPECTED_RES_COUNT = 40  # 1 forecast every 3 hours for 5 days: 5*24/3
     assert "cnt" in weather
     assert weather["cnt"] == EXPECTED_RES_COUNT
     assert len(weather["list"]) == EXPECTED_RES_COUNT

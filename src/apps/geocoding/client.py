@@ -163,19 +163,23 @@ class GeocodingClient:
             hotel_name = hotel.get("hotel_name", "Unknown")
 
             if not address:
-                print(f"Warning: No address for hotel '{hotel_name}', skipping geocoding")
+                print(
+                    f"Warning: No address for hotel '{hotel_name}', skipping geocoding"
+                )
                 results.append({**hotel, "latitude": None, "longitude": None})
                 continue
 
             try:
-                print(f"Geocoding hotel {i+1}/{len(hotels_data)}: {hotel_name}")
+                print(f"Geocoding hotel {i + 1}/{len(hotels_data)}: {hotel_name}")
                 coords = self.geocode_address(address, city=city_name)
 
                 if coords:
                     results.append({**hotel, **coords})
-                    print(f"  Success: ({coords['latitude']:.6f}, {coords['longitude']:.6f})")
+                    print(
+                        f"  Success: ({coords['latitude']:.6f}, {coords['longitude']:.6f})"
+                    )
                 else:
-                    print(f"  Failed: Address not found")
+                    print("  Failed: Address not found")
                     results.append({**hotel, "latitude": None, "longitude": None})
 
             except requests.RequestException as e:

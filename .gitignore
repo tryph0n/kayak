@@ -24,8 +24,6 @@ venv/
 ENV/
 env/
 
-.python-version
-
 .env
 
 .pytest_cache/

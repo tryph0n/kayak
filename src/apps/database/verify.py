@@ -54,15 +54,16 @@ def verify_database():
             print(f"  {i}. {dest.city_name} (score: {dest.weather_score:.2f})")
 
         # Check top hotels
-        top_hotels = session.query(Hotel).order_by(Hotel.score.desc()).limit(expected_hotels).all()
+        top_hotels = (
+            session.query(Hotel)
+            .order_by(Hotel.score.desc())
+            .limit(expected_hotels)
+            .all()
+        )
 
         print(f"\nOK Top-{expected_hotels} Hotels by Score:")
         for i, hotel in enumerate(top_hotels, 1):
-            dest = (
-                session.query(Destination)
-                .filter_by(city_id=hotel.city_id)
-                .first()
-            )
+            dest = session.query(Destination).filter_by(city_id=hotel.city_id).first()
             city_display = dest.city_name if dest else "Unknown"
             score_display = f"{hotel.score:.1f}" if hotel.score is not None else "N/A"
             print(f"  {i}. {hotel.hotel_name} ({city_display}, score: {score_display})")
@@ -71,9 +72,11 @@ def verify_database():
         print("\nOK Data Integrity Checks:")
 
         # Orphan hotels (should be 0)
-        orphans = session.query(Hotel).filter(
-            ~Hotel.city_id.in_(session.query(Destination.city_id))
-        ).count()
+        orphans = (
+            session.query(Hotel)
+            .filter(~Hotel.city_id.in_(session.query(Destination.city_id)))
+            .count()
+        )
         print(f"  - Orphan hotels: {orphans} (should be 0)")
 
         # Hotel distribution per city
