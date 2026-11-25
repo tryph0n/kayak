@@ -1,4 +1,4 @@
-Initial version of this project; the maintained version is [edu-kayak](https://github.com/tryph0n/edu-kayak).
+Initial version of this project; the maintained version is [weather-travel-recommender](https://github.com/tryph0n/weather-travel-recommender).
 
 > ## Educational project: please do not reproduce
 >
